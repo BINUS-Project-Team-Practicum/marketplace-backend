@@ -31,10 +31,13 @@ const userSchema = new mongoose.Schema({
   }
 }, { timestamps: true });
 
-userSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) return next();
+// Hook async tidak menerima next. Sejak Mongoose 7, argumen pertama untuk hook
+// async berisi options dari save(), bukan fungsi next, sehingga memanggil
+// next() menghasilkan error "next is not a function" dan register gagal.
+// Selesainya hook async ditandai oleh promise-nya sendiri, jadi cukup return.
+userSchema.pre('save', async function () {
+  if (!this.isModified('password')) return;
   this.password = await bcrypt.hash(this.password, 10);
-  next();
 });
 
 userSchema.methods.comparePassword = function (candidatePassword) {
