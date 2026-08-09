@@ -2,11 +2,33 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
 const userSchema = new mongoose.Schema({
-  firstName: { type: String, required: true },
-  lastName: { type: String, required: true },
-  email: { type: String, required: true, unique: true, lowercase: true },
-  phone: { type: String, required: true, unique: true },
-  password: { type: String, required: true, minlength: 8 }
+  firstName: {
+    type: String,
+    required: [true, 'Nama depan wajib diisi'],
+    trim: true
+  },
+  lastName: {
+    type: String,
+    required: [true, 'Nama belakang wajib diisi'],
+    trim: true
+  },
+  email: {
+    type: String,
+    required: [true, 'Email wajib diisi'],
+    unique: true,
+    lowercase: true,
+    match: [/^\S+@\S+\.\S+$/, 'Format email tidak valid']
+  },
+  phone: {
+    type: String,
+    required: [true, 'Nomor telepon wajib diisi'],
+    unique: true
+  },
+  password: {
+    type: String,
+    required: [true, 'Password wajib diisi'],
+    minlength: [8, 'Password minimal 8 karakter']
+  }
 }, { timestamps: true });
 
 userSchema.pre('save', async function (next) {
