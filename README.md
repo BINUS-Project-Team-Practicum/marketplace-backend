@@ -82,6 +82,30 @@ Tanpa Docker:
 npm run seed
 ```
 
+## Gambar produk dan alamatnya
+
+File gambar ada di `assets/products/`, terpisah dari assets frontend, dan disajikan di `/static`. Contoh: `assets/products/foo.jpg` bisa dibuka di `/static/products/foo.jpg`. Sumber dan lisensi tiap gambar dicatat di `assets/products/CREDITS.md`.
+
+Yang tersimpan di database hanya path relatif tanpa host:
+
+```text
+/static/products/air-max-pro-runner.jpg
+```
+
+Host-nya ditambahkan saat API menjawab request, mengikuti alamat yang dipakai pemanggil. Data yang sama karena itu tetap benar dibuka dari mana pun:
+
+| Dibuka lewat | URL gambar di response |
+|---|---|
+| `localhost:5000` | `http://localhost:5000/static/products/...` |
+| IP LAN dari HP (Expo) | `http://192.168.x.x:5000/static/products/...` |
+| Domain publik via HTTPS | `https://api.contoh.com/static/products/...` |
+
+Kalau host ikut disimpan di database, setiap environment harus seed ulang dan datanya langsung salah begitu alamatnya berubah. Itu sebabnya penyusunan URL dikerjakan di `utils/assetUrl.js`, bukan di `seed.js`.
+
+Deteksi `https` di belakang reverse proxy bergantung pada `app.set('trust proxy', true)` di `server.js`, yang membaca header `X-Forwarded-Proto`.
+
+Isi `ASSET_BASE_URL` hanya kalau gambar dilayani dari alamat lain, misalnya CDN. Nilai itu menimpa deteksi otomatis.
+
 ## Daftar endpoint
 
 Semua endpoint diawali `/api`.

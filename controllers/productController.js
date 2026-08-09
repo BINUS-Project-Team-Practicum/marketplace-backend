@@ -1,4 +1,5 @@
 const Product = require('../models/Product');
+const { withAssetUrls } = require('../utils/assetUrl');
 
 exports.getProducts = async (req, res) => {
   try {
@@ -8,7 +9,7 @@ exports.getProducts = async (req, res) => {
     if (search) filter.name = { $regex: search, $options: 'i' };
 
     const products = await Product.find(filter).sort({ createdAt: -1 });
-    res.json({ success: true, count: products.length, data: products });
+    res.json({ success: true, count: products.length, data: withAssetUrls(products, req) });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
@@ -29,7 +30,7 @@ exports.getProductById = async (req, res) => {
     if (!product) {
       return res.status(404).json({ success: false, message: 'Produk tidak ditemukan' });
     }
-    res.json({ success: true, data: product });
+    res.json({ success: true, data: withAssetUrls(product, req) });
   } catch (err) {
     if (err.kind === 'ObjectId') {
       return res.status(400).json({ success: false, message: 'ID produk tidak valid' });
@@ -41,7 +42,7 @@ exports.getProductById = async (req, res) => {
 exports.createProduct = async (req, res) => {
   try {
     const product = await Product.create(req.body);
-    res.status(201).json({ success: true, data: product });
+    res.status(201).json({ success: true, data: withAssetUrls(product, req) });
   } catch (err) {
     res.status(400).json({ success: false, message: err.message });
   }
@@ -56,7 +57,7 @@ exports.updateProduct = async (req, res) => {
     if (!product) {
       return res.status(404).json({ success: false, message: 'Produk tidak ditemukan' });
     }
-    res.json({ success: true, data: product });
+    res.json({ success: true, data: withAssetUrls(product, req) });
   } catch (err) {
     res.status(400).json({ success: false, message: err.message });
   }
@@ -80,7 +81,7 @@ exports.updateStock = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Produk tidak ditemukan' });
     }
 
-    res.json({ success: true, data: product });
+    res.json({ success: true, data: withAssetUrls(product, req) });
   } catch (err) {
     if (err.kind === 'ObjectId') {
       return res.status(400).json({ success: false, message: 'ID produk tidak valid' });

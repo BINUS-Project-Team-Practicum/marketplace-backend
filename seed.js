@@ -3,15 +3,12 @@ const mongoose = require('mongoose');
 const Product = require('./models/Product');
 
 // Gambar disimpan di assets/products/ dan disajikan server.js lewat /static.
-// URL-nya harus absolut karena yang memuat gambar adalah browser di frontend,
-// yang jalan di port berbeda (5173 atau 8080), bukan di port backend.
 //
-// Saat deploy ke server lain, set ASSET_BASE_URL ke alamat publik backend,
-// misalnya https://api.contoh.com — tanpa garis miring di akhir.
-const ASSET_BASE_URL =
-  process.env.ASSET_BASE_URL || `http://localhost:${process.env.PORT || 5000}`;
-
-const productImage = (file) => `${ASSET_BASE_URL}/static/products/${file}`;
+// Yang masuk database hanya path relatif, tanpa host. Host-nya ditambahkan
+// belakangan oleh utils/assetUrl.js saat API menjawab request, mengikuti
+// alamat yang dipakai pemanggil. Jadi data yang sama tetap benar dibuka dari
+// localhost, dari IP LAN lewat HP, maupun dari domain publik setelah deploy.
+const productImage = (file) => `/static/products/${file}`;
 
 const products = [
   {

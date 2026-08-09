@@ -7,6 +7,12 @@ const connectDB = require('./config/db');
 connectDB();
 
 const app = express();
+
+// Di belakang reverse proxy (nginx, load balancer, platform hosting), tanpa
+// baris ini req.protocol selalu terbaca 'http' walaupun pengunjung memakai
+// https. Akibatnya URL gambar yang disusun API ikut salah.
+app.set('trust proxy', true);
+
 app.use(cors());
 app.use(express.json());
 
