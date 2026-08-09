@@ -1,0 +1,15 @@
+# Override untuk mode development: nodemon + hot reload.
+# Pakai bersama docker-compose.yml, lihat README.
+services:
+  api:
+    build:
+      target: dev
+    image: marketplace-backend:dev
+    volumes:
+      # Source di-mount dari host supaya perubahan file langsung terbaca nodemon.
+      - .:/app
+      # Volume kosong ini menutupi node_modules host, jadi yang dipakai
+      # tetap node_modules hasil install di dalam container.
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true

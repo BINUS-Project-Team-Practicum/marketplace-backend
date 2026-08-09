@@ -1,0 +1,16 @@
+services:
+  api:
+    build:
+      context: .
+      target: prod
+    image: marketplace-backend:prod
+    env_file: .env
+    ports:
+      - "5000:5000"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:5000/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
